@@ -49,4 +49,17 @@ Notre
 
 2. install phpmyadmin & maria
 
+[Install MySQL](https://www.digitalocean.com/community/tutorials/how-to-install-the-latest-mysql-on-debian-10)
+[Install phpmyadmin](https://www.itzgeek.com/how-tos/linux/debian/how-to-install-phpmyadmin-with-nginx-on-debian-10.html)
+
+
+Name DB : phpmyadmin
+host : localhost
+
+user : pma               // n'as pas les droits root (je pense que c'est mieux de prendre ça pour Wordpress)
+pass: pmapass
+
+root user : root         // du coup ça c'est plus pour modif a la main je pense 
+root pass: ' '
+
 
