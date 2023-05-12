@@ -1,10 +1,6 @@
 
-<p align="center">
-<h1>Rapport de projet</h1>
-</p>
-<p align="center">
-<h2>Tp 3 - CMS</h2>
-</p>
+<h1 align="center">Rapport de projet</h1>
+<h2 align="center">Tp 3 - CMS</h2>
 
 Par : Cody ADAM et Benjamin DE ZORDO
 
