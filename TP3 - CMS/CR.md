@@ -71,20 +71,16 @@ default  wordpress.conf
 
 Voici le contenu du fichier `wordpress.conf` : 
 
-```
+```php
 server {
-  listen 80;
+  listen 80;  # port d'écoute Nginx
   root /var/www/html/wordpress;
   index index.php index.html index.html index.htm;
-  server_name codybenjam.ddns.net;
+  server_name codybenjam.ddns.net; # nom de domaine que l'on a ajouté
   access_log /var/log/nginx/wordpress_access.log;
   error_log /var/log/nginx/wordpress_error.log;
   client_max_body_size 64M;
-
-
   location / {
-      # First attempt to serve request as file, then
-      # as directory, then fall back to WordPress index.php
       try_files $uri $uri/ /index.php?$args;
   }
 
@@ -119,12 +115,60 @@ server {
   }
 }
 ```
+Sans rentrer dans les détails ce fichier permet de faire le lien entre Nginx et Wordpress.
 
+Enfin la dernière étape consiste a effectivement dire à Nginx d'utiliser ce fichier de configuration. Pour cela il faut créer un lien symbolique entre le fichier de configuration et le dossier `/etc/nginx/sites-enabled/`.
 
+Nous allons nous rendre dans le dossier `nginx` et éditer le fichier `nginx.conf` :
 
+```bash
+zprojet@debian:/etc/nginx$ ls
+conf.d          koi-utf     modules-available  proxy_params     sites-enabled  win-utf
+fastcgi.conf    koi-win     modules-enabled    scgi_params      snippets
+fastcgi_params  mime.types  nginx.conf         sites-available  uwsgi_params
+```
 
+```bash
+user www-data;
+worker_processes auto;
+pid /run/nginx.pid;
+include /etc/nginx/modules-enabled/*.conf;
 
+events {
+	worker_connections 768;
+	# multi_accept on;
+}
 
+http {
+	# Basic Settings
+	sendfile on;
+	tcp_nopush on;
+	types_hash_max_size 2048;
+	# server_tokens off;
+	# server_names_hash_bucket_size 64;
+	# server_name_in_redirect off;
+
+	include /etc/nginx/mime.types;
+	default_type application/octet-stream;
+
+	# SSL Settings
+	ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3; # Dropping SSLv3, ref: POODLE
+	ssl_prefer_server_ciphers on;
+
+	# Logging Settings
+	access_log /var/log/nginx/access.log;
+	error_log /var/log/nginx/error.log;
+
+	# Gzip Settings
+	gzip on;
+
+	# Virtual Host Configs
+	include /etc/nginx/conf.d/*.conf;   # ligne ajoutée
+	include /etc/nginx/sites-enabled/*; # ligne ajoutée
+}
+```
+
+Nous avons ajouter les deux dernières lignes.
 
 
 # 2. MySQL et PhpMyAdmin
@@ -142,3 +186,41 @@ pass: pmapass
 
 root user : root         // du coup ça c'est plus pour modif a la main je pense 
 root pass: ' '
+
+
+## b. Configuration de Nginx avec PhpMyAdmin
+
+La configutaion de PhpMyAdmin est similaire à celle de Wordpress. Nous allons donc créer un nouveau fichier de configiration pour qu'il prenne en compte PhpMyAdmin :
+
+```bash
+zprojet@debian:/etc/nginx/sites-available$ ls
+default  phpmyadmin.conf  wordpress.conf
+```
+
+Voici le contenu du fichier `phpmyadmin.conf` : 
+
+```php
+server {
+  listen 80;
+  root /var/www/html/phpmyadmin;
+  index index.php index.html index.htm;
+  server_name codybenjam.ddns.net;
+  access_log /var/log/nginx/wordpress_access.log;
+  error_log /var/log/nginx/wordpress_error.log;
+  client_max_body_size 64M;
+  location /phpmyadmin {
+    try_files $uri $uri/ /index.php?$args;
+  }
+
+  location ~ \.php$ {
+    try_files $uri =404;
+    include /etc/nginx/fastcgi_params;
+    fastcgi_read_timeout 3600s;
+    fastcgi_buffer_size 128k;
+    fastcgi_buffers 4 128k;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    fastcgi_pass unix:/run/php/php7.3-fpm.sock;
+    fastcgi_index index.php;
+  }
+}
+```
