@@ -16,7 +16,7 @@ Par : Cody ADAM et Benjamin DE ZORDO
 - [4. Installation et configuration](#4-installation-et-configuration)
   - [4.1. Initialisation de la VM](#41-initialisation-de-la-vm)
     - [4.1.1. Création de la VM Debian](#411-création-de-la-vm-debian)
-    - [4.1.b Connexion à la VM](#41b-connexion-à-la-vm)
+    - [4.1.2 Connexion à la VM](#412-connexion-à-la-vm)
   - [4.2. Installation de Nginx (tutoriel)](#42-installation-de-nginx-tutoriel)
   - [4.3. Wordpress](#43-wordpress)
     - [4.2.a. Installation de Wordpress](#42a-installation-de-wordpress)
@@ -34,8 +34,7 @@ Par : Cody ADAM et Benjamin DE ZORDO
   - [7.1. Installation de Check MK](#71-installation-de-check-mk)
   - [7.2. Installation de l'agent](#72-installation-de-lagent)
   - [7.3 Ajout de l'hôte](#73-ajout-de-lhôte)
-- [8. Mot de passe et aspect d'amélioration](#8-mot-de-passe-et-aspect-damélioration)
-- [9. Conclusion](#9-conclusion)
+- [8. Conclusion](#8-conclusion)
 
 
 # 1. Introduction 
@@ -95,7 +94,7 @@ Une fois la VM Debian créée, vous pourrez y accéder en utilisant le protocole
 
 Note : Les informations d'authentification et l'adresse IP de la VM vous seront fournies une fois la VM créée. Conservez ces informations en lieu sûr, car elles seront nécessaires pour accéder à la VM et la configurer ultérieurement.
 
-### 4.1.b Connexion à la VM
+### 4.1.2 Connexion à la VM
 
 Pour vous connecter à la VM de notre entreprise, vous devez utiliser les identifiants suivants. Veuillez noter qu'il est important de changer le mot de passe par défaut en utilisant la commande `sudo passwd`, ce que nous avons déjà fait.
 
@@ -124,7 +123,6 @@ Nginx permet de faire le pont entre notre serveur et le client ; il permet de g�
 Pour l'installer NGINX, il faut utiliser la commande suivante : `sudo apt install nginx`.
 
 > Sur le tutoriel le firewall de debian (ufw) est utilisé, néanmoins pour plus de practicité nous avons décidé de ne pas l'utiliser bien que dans un contexte de sécurité il est préférable de l'utiliser.
-
 
 Enfin, pour lancer le service Nginx il faut utiliser la commande suivante : `sudo systemctl start nginx`.
 
@@ -162,7 +160,6 @@ wp-activate.php  wp-config.php         wp-links-opml.php  wp-settings.php
 ### 4.2.b. Configuration de Nginx avec Wordpress
 
 Pour modifier les paramètre de Nginx, il suffit de ajouter un fichier dans le dossier `/etc/nginx/sites-available/` avec l'extension `.conf`. Nous avons donc créé le fichier `cms.conf` avec la commande suivante : `sudo nano /etc/nginx/sites-available/cms.conf`.
-
 
 Il ne faut pas oublier de suprimer le fichier `default` qui est le fichier de configuration par défaut de Nginx. Pour cela il faut utiliser la commande suivante : `sudo rm /etc/nginx/sites-available/default`.
 
@@ -288,7 +285,6 @@ Password: ' ' # (spacebar character)
 
 Guide suivit : [How To Install and Secure phpMyAdmin on Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/how-to-install-and-secure-phpmyadmin-on-ubuntu-20-04)
 
-
 Étapes importantes :
 - `sudo apt install phpmyadmin php-mbstring php-zip php-gd php-json php-curl` : installation de PhpMyAdmin et les dépendances
 
@@ -390,8 +386,6 @@ Les trois utilisateurs créer sont :
 - admin : Administrateur (Administrator)
 - beta : Editeur (Editor)
 - omega : Rédacteur (Subscriber)
-
-
 
 
 # 6. Certificat auto-signé SSL [tutoriel](https://www.tremplin-numerique.org/comment-creer-et-utiliser-un-ssl-auto-signe-dans-nginx-cloudsavvy-it)
@@ -507,16 +501,7 @@ Enfin nous devons dire à Check Mk vers qui se tourner pour établir la communic
 
 ![checkmk](assets/4_check_mk_host.png)
 
-
-# 8. Mot de passe et aspect d'amélioration
-
-Le long de notre TP pour plus de simplicité nous avons utiliser les mots de passe faibles que nous nous transmétions.
-
-Néanmoins, lors d'un projet réel il aurait été préférable d'utiliser une base de données de mots de passe sécurisée comme BitWarden qui permet de créer des groupes et de partager des mots de passe entre les membres.
-
-De plus, BitWarden permet de générer des mots de passe aléatoires et de les stocker de manière sécurisée selon des critères définis par l'utilisateur.
-
-# 9. Conclusion
+# 8. Conclusion
 
 Au terme de ce document, nous avons présenté les choix technologiques et les étapes nécessaires pour mettre en place un CMS au sein de l'entreprise TechnoGenix. Nous avons choisi d'utiliser Wordpress comme CMS, Nginx comme serveur web, MySQL comme système de gestion de base de données et PhpMyAdmin pour faciliter la gestion de la base de données.
 
@@ -527,5 +512,7 @@ Cette mise en place permet à TechnoGenix de disposer d'un site vitrine sur Inte
 Cependant, il est important de souligner que certaines améliorations peuvent encore être apportées au système, telles que l'optimisation des performances, la mise en place de sauvegardes régulières et l'intégration de mécanismes de surveillance plus avancés.
 
 Enfin, il convient de réfléchir à la manière dont le système pourrait évoluer et s'adapter à une charge croissante si le nombre d'utilisateurs venait à augmenter significativement. Il faudra ainsi envisager la possibilité de mettre en place des solutions de scalabilité, telles que la répartition de charge, la mise en cache ou l'utilisation de CDN pour optimiser les performances et assurer la disponibilité du site.
+
+De plus, le long de notre TP pour plus de simplicité nous avons utiliser les mots de passe faibles que nous nous transmétions. Néanmoins, lors d'un projet réel il aurait été préférable d'utiliser une base de données de mots de passe sécurisée comme BitWarden qui permet de créer des groupes et de partager des mots de passe entre les membres. De plus, BitWarden permet de générer des mots de passe aléatoires et de les stocker de manière sécurisée selon des critères définis par l'utilisateur.
 
 Dans l'ensemble, la solution mise en place offre une base solide pour le développement et la maintenance du site vitrine de TechnoGenix, tout en étant suffisamment flexible pour s'adapter aux besoins futurs de l'entreprise.
