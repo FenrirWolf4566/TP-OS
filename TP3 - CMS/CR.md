@@ -460,8 +460,21 @@ server {
 
 Enfin, redémarrer Nginx avec `sudo systemctl restart nginx` pour prendre en compte les modifications.
 
+# 7. Monitoring : Check MK
 
-# 7. Conclusion
+The site can be started with omd start monitoring.
+The default web UI is available at http://debian/monitoring/
+
+cmkbdezordo.istic.univ-rennes1.fr
+http://148.60.11.204/monitoring
+cmkbdezordo.istic.univ-rennes1.fr/monitoring
+
+
+The admin user for the web applications is cmkadmin with password: 9G3cMerJ
+For command line administration of the site, log in with 'omd su monitoring'.
+After logging in, you can change the password for cmkadmin with 'cmk-passwd cmkadmin'.
+
+# 8. Conclusion
 
 Au terme de ce document, nous avons présenté les choix technologiques et les étapes nécessaires pour mettre en place un CMS au sein de l'entreprise TechnoGenix. Nous avons choisi d'utiliser Wordpress comme CMS, Nginx comme serveur web, MySQL comme système de gestion de base de données et PhpMyAdmin pour faciliter la gestion de la base de données.
 
