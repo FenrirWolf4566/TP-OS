@@ -30,6 +30,11 @@ Par : Cody ADAM et Benjamin DE ZORDO
   - [6.1. Génération du certificat](#61-génération-du-certificat)
   - [6.2. Configuration de Nginx](#62-configuration-de-nginx)
 - [7. Conclusion](#7-conclusion)
+- [6. Monitoring : Check MK](#6-monitoring--check-mk)
+  - [6.1. Installation de Check MK](#61-installation-de-check-mk)
+  - [6.2. Installation de l'agent](#62-installation-de-lagent)
+    - [6.3 Ajout de l'hôte](#63-ajout-de-lhôte)
+- [7. Mot de passe et aspect d'amélioration](#7-mot-de-passe-et-aspect-damélioration)
 
 
 # 1. Introduction 
@@ -450,9 +455,6 @@ resolver_timeout 5s;
 add_header X-Frame-Options DENY;
 add_header X-Content-Type-Options nosniff;
 add_header X-XSS-Protection "1; mode=block";
-
-ssl_dhparam /etc/nginx/dhparam.pem;
-ssl_ecdh_curve secp384r1;
 ```
 
 Maintenant, rendez-vous dans le fichier de configuration de Nginx `/etc/nginx/sites-enabled/cms.conf` et ajouter les lignes suivantes :
@@ -471,7 +473,12 @@ server {
 
 Enfin, redémarrer Nginx avec `sudo systemctl restart nginx` pour prendre en compte les modifications.
 
+<<<<<<< HEAD
+/!\ Malheureusement cette solution n'a pas fonctionné et les logs ne nous on pas permi d'identifier le problème. Une solution que nous aurions proposé est d'utiliser Nginx Proxy Manager qui permet de gérer les certificats SSL de manière plus simple et intuitive via une interface web. Néanmoins, cette solution necessite l'enmploi d'un Docker ce qui n'étais pas le but ici.
+# 7. Monitoring : Check MK
+=======
 # 7. Supervision avec Check_MK
+>>>>>>> e5676f5c6f2dc6605888c03fc68c744f601cb2d4
 
 Le site peut être démarré avec `omd start monitoring`.
 L'interface Web par défaut est disponible à l'adresse http://debian/monitoring/
@@ -491,10 +498,38 @@ Au terme de ce document, nous avons présenté les choix technologiques et les �
 
 Nous avons décrit la procédure de création d'une VM Debian, l'installation des composants nécessaires, la configuration des différents services et la sécurisation de l'ensemble grâce à un certificat auto-signé SSL. Nous avons également abordé l'initialisation du CMS et la création de différents profils d'utilisateurs pour répondre aux exigences fonctionnelles de l'entreprise.
 
-Cette mise en place permet à TechnoGenix de disposer d'un site vitrine sur Internet, facilement administrable par le service communication et le service informatique. La documentation détaillée permettra à l'équipe de suivre, mettre à jour et administrer le service en cas de besoin.
+Le monitoring permet surveiller l'état et les performances des différents composants d'un système informatique (serveurs, réseaux, applications, etc.) afin de détecter les problèmes potentiels et pouvoir réagir rapidement en cas de dysfonctionnement.
+
+Checkmk est une solution de monitoring open source que nous utiliserons fans le but de monitorer notre serveur.
+
+## 6.1. Installation de Check MK
+
+Nous avons recréer un serveur Debian afin d'y installer CheckMK via le tutoriel du TP2. Une fois installé, nous avons accès à l'interface web, via : `cmkbdezordo.istic.univ-rennes1.fr/monitoring`.
+Les credentials administrateurs sont données lors de l'intallation et sont a changer par la suite.
+
+## 6.2. Installation de l'agent
+
+Afin de pouvoir monitorer notre serveur nous devons ajouter un hôte. Mais avant cela nous devont installer sur le serveur monitorer un "Agent" qui permettra de communiquer avec Check MK. 
+
+Nous avons choisit le package le plus basique : `check-mk-agent_2.2.0b7-1_all.deb` que nous avons télécharger sur le serveur de Wordpress avec : 
+```bash	
+zprojet@debian:~$ sudo wget http://cmkbdezordo.istic.univ-rennes1.fr/monitoring/check_mk/agents/check-
+check-mk-agent_2.2.0b7-1_ 100%[===================================>]   3,82M  --.-KB/s    ds 0,01s
+zprojet@debian:~$ sudo dpkg -i check-mk-agent_2.2.0b7-1_all.deb
+```
+
+Puis on vérifie que le port de communication est bien ouvert : `sudo ss -lnptu | grep 6556`
+
+### 6.3 Ajout de l'hôte
+
+Enfin nous devons dire à Check Mk vers qui se tourner pour établir la communication avec l'agent. Pour cela nous allons dans l'interface web et nous cliquons sur "Setup", "Host", "Ad new host" puis nous renseignons l'url du serveur monitorer : `http://codybenji-cms.istic.univ-rennes1.fr`, puis on clique sur "Save & run service discovery".
+
+![checkmk](assets/4_check_mk_host.png)
 
 Cependant, il est important de souligner que certaines améliorations peuvent encore être apportées au système, telles que l'optimisation des performances, la mise en place de sauvegardes régulières et l'intégration de mécanismes de surveillance plus avancés.
 
 Enfin, il convient de réfléchir à la manière dont le système pourrait évoluer et s'adapter à une charge croissante si le nombre d'utilisateurs venait à augmenter significativement. Il faudra ainsi envisager la possibilité de mettre en place des solutions de scalabilité, telles que la répartition de charge, la mise en cache ou l'utilisation de CDN pour optimiser les performances et assurer la disponibilité du site.
 
-Dans l'ensemble, la solution mise en place offre une base solide pour le développement et la maintenance du site vitrine de TechnoGenix, tout en étant suffisamment flexible pour s'adapter aux besoins futurs de l'entreprise.
+# 7. Mot de passe et aspect d'amélioration
+
+Le long de notre TP pour plus de simplicité nous avons utiliser les mots de passe faibles que nous nous transmétions. Néanmoins, lors d'un projet réel il aurait été préférable d'utiliser une base de données de mots de passe sécurisée comme BitWarden qui permet de créer des groupes et de partager des mots de passe entre les membres. De plus, BitWarden permet de générer des mots de passe aléatoires et de les stocker de manière sécurisée selon des critères définis par l'utilisateur.
