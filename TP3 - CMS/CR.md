@@ -1,5 +1,14 @@
 
+<p align="center">
+<h1>Rapport de projet</h1>
+</p>
+<p align="center">
+<h2>Tp 3 - CMS</h2>
+</p>
 
+Par : Cody ADAM et Benjamin DE ZORDO
+
+# Sommaire
 - [1. Introduction](#1-introduction)
 - [2. Choix des technologies](#2-choix-des-technologies)
 - [3. Prérequis](#3-prérequis)
