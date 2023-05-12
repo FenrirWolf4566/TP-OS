@@ -9,6 +9,7 @@
 Par : Cody ADAM et Benjamin DE ZORDO
 
 # Sommaire
+- [Sommaire](#sommaire)
 - [1. Introduction](#1-introduction)
 - [2. Choix des technologies](#2-choix-des-technologies)
 - [3. Prérequis](#3-prérequis)
@@ -521,10 +522,10 @@ Au terme de ce document, nous avons présenté les choix technologiques et les �
 
 Nous avons décrit la procédure de création d'une VM Debian, l'installation des composants nécessaires, la configuration des différents services et la sécurisation de l'ensemble grâce à un certificat auto-signé SSL. Nous avons également abordé l'initialisation du CMS et la création de différents profils d'utilisateurs pour répondre aux exigences fonctionnelles de l'entreprise.
 
-Le monitoring permet surveiller l'état et les performances des différents composants d'un système informatique (serveurs, réseaux, applications, etc.) afin de détecter les problèmes potentiels et pouvoir réagir rapidement en cas de dysfonctionnement.
-
-Checkmk est une solution de monitoring open source que nous utiliserons fans le but de monitorer notre serveur.
+Cette mise en place permet à TechnoGenix de disposer d'un site vitrine sur Internet, facilement administrable par le service communication et le service informatique. La documentation détaillée permettra à l'équipe de suivre, mettre à jour et administrer le service en cas de besoin.
 
 Cependant, il est important de souligner que certaines améliorations peuvent encore être apportées au système, telles que l'optimisation des performances, la mise en place de sauvegardes régulières et l'intégration de mécanismes de surveillance plus avancés.
 
 Enfin, il convient de réfléchir à la manière dont le système pourrait évoluer et s'adapter à une charge croissante si le nombre d'utilisateurs venait à augmenter significativement. Il faudra ainsi envisager la possibilité de mettre en place des solutions de scalabilité, telles que la répartition de charge, la mise en cache ou l'utilisation de CDN pour optimiser les performances et assurer la disponibilité du site.
+
+Dans l'ensemble, la solution mise en place offre une base solide pour le développement et la maintenance du site vitrine de TechnoGenix, tout en étant suffisamment flexible pour s'adapter aux besoins futurs de l'entreprise.
