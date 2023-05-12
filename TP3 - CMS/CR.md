@@ -56,9 +56,9 @@ Afin de mettre en place un système de gestion de contenu adapté aux besoins de
 # 3. Prérequis
 
 Pour ce TP nous avons utiliser les VM de l'ISTIC dont l'ip est la suivante : `148.60.11.67`.
-Nous avons également utiliser un nom de domaine : [codybenji-cms.istic.univ-rennes1.from](http://codybenji-cms.istic.univ-rennes1.fr) qui pointe vers l'IP de la VM sous Debian.
+Nous avons également utilisé un nom de domaine : [codybenji-cms.istic.univ-rennes1.from](http://codybenji-cms.istic.univ-rennes1.fr) qui pointe vers l'IP de la VM sous Debian.
 
-Nous nous sommes aidé de certains tutoriels pour installer ces outils qui seront cités dans chaque partie de ce document.
+Nous nous sommes aidés de certains tutoriels pour installer ces outils qui seront cités dans chaque partie de ce document.
 
 
 # 4. Installation et configuration
@@ -80,7 +80,7 @@ Une fois la VM Debian créée, vous pourrez y accéder en utilisant le protocole
 
 Note : Les informations d'authentification et l'adresse IP de la VM vous seront fournies une fois la VM créée. Conservez ces informations en lieu sûr, car elles seront nécessaires pour accéder à la VM et la configurer ultérieurement.
 
-### 4.1.b Connection à la VM
+### 4.1.b Connexion à la VM
 
 Pour vous connecter à la VM de notre entreprise, vous devez utiliser les identifiants suivants. Veuillez noter qu'il est important de changer le mot de passe par défaut en utilisant la commande `sudo passwd`, ce que nous avons déjà fait.
 
@@ -312,6 +312,8 @@ location /phpmyadmin {
   }
 }
 ```
+
+Pour finir le service PhpMyAdmin est accessible à l'adresse : [codybenji-cms.istic.univ-rennes1.fr/phpmyadmin](http://codybenji-cms.istic.univ-rennes1.fr/phpmyadmin/)
 
 ### 4.3.b. Connexion de la base de donnée à Wordpress
 
