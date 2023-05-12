@@ -465,9 +465,10 @@ Enfin, redémarrer Nginx avec `sudo systemctl restart nginx` pour prendre en com
 Le site peut être démarré avec `omd start monitoring`.
 L'interface Web par défaut est disponible à l'adresse http://debian/monitoring/
 
-cmkbdezordo.istic.univ-rennes1.fr
-http://148.60.11.204/monitoring
-cmkbdezordo.istic.univ-rennes1.fr/monitoring
+Les sites suivants sont disponibles :
+- [cmkbdezordo.istic.univ-rennes1.fr](cmkbdezordo.istic.univ-rennes1.fr)
+- [http://148.60.11.204/monitoring](http://148.60.11.204/monitoring)
+- [cmkbdezordo.istic.univ-rennes1.fr/monitoring](cmkbdezordo.istic.univ-rennes1.fr/monitoring)
 
 L'utilisateur administrateur pour les applications Web est `cmkadmin` avec le mot de passe : `9G3cMerJ`
 Pour l'administration en ligne de commande du site, connectez-vous avec `omd su monitoring`.
