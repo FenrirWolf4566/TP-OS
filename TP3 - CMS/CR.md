@@ -20,6 +20,7 @@
 - [6. Certificat auto-signé SSL tutoriel](#6-certificat-auto-signé-ssl-tutoriel)
   - [6.1. Génération du certificat](#61-génération-du-certificat)
   - [6.2. Configuration de Nginx](#62-configuration-de-nginx)
+- [7. Conclusion](#7-conclusion)
 - [6. Monitoring : Check MK](#6-monitoring--check-mk)
   - [6.1. Installation de Check MK](#61-installation-de-check-mk)
   - [6.2. Installation de l'agent](#62-installation-de-lagent)
@@ -150,44 +151,33 @@ wp-activate.php  wp-config.php         wp-links-opml.php  wp-settings.php
 
 ### 4.2.b. Configuration de Nginx avec Wordpress
 
-Nginx possède un dossier contenant des fichiers de configuration : `/etc/nginx/sites-available/`. Nous allons donc créer un nouveau fichier de configiration pour qu'il prenne en compte Wordpress :
+Pour modifier les paramètre de Nginx, il suffit de ajouter un fichier dans le dossier `/etc/nginx/sites-available/` avec l'extension `.conf`. Nous avons donc créé le fichier `cms.conf` avec la commande suivante : `sudo nano /etc/nginx/sites-available/cms.conf`.
+
+
+Il ne faut pas oublier de suprimer le fichier `default` qui est le fichier de configuration par défaut de Nginx. Pour cela il faut utiliser la commande suivante : `sudo rm /etc/nginx/sites-available/default`.
 
 ```bash
 zprojet@debian:/etc/nginx/sites-available$ ls
-default  wordpress.conf
+default  cms.conf
 ```
 
-Voici le contenu du fichier `wordpress.conf` : 
+Voici le contenu du fichier `cms.conf` : 
 
-```php
+```conf
 server {
-  listen 80;  # port d'écoute Nginx
+  server_name codybenji-cms.istic.univ-rennes1.fr;
+
+  listen 80;
   root /var/www/html/wordpress;
   index index.php index.html index.html index.htm;
-  server_name codybenjam.ddns.net; # nom de domaine que l'on a ajouté
   access_log /var/log/nginx/wordpress_access.log;
   error_log /var/log/nginx/wordpress_error.log;
   client_max_body_size 64M;
+
   location / {
+      # First attempt to serve request as file, then
+      # as directory, then fall back to WordPress index.php
       try_files $uri $uri/ /index.php?$args;
-  }
-
-  # Add the new location block for /phpmyadmin
-  location /phpmyadmin {
-      alias /var/www/html/phpmyadmin;
-      index index.php;
-
-      location ~ \.php$ {
-          try_files $uri =404;
-          fastcgi_split_path_info ^(.+\.php)(/.+)$;
-          include /etc/nginx/fastcgi_params;
-          fastcgi_read_timeout 3600s;
-          fastcgi_buffer_size 128k;
-          fastcgi_buffers 4 128k;
-          fastcgi_param SCRIPT_FILENAME $request_filename;
-          fastcgi_pass unix:/run/php/php7.4-fpm.sock;
-          fastcgi_index index.php;
-      }
   }
 
   # suport php
@@ -257,6 +247,7 @@ http {
 ```
 
 Nous avons ajouter les deux dernières lignes.
+Cela va charger les fichiers de configuration présent dans les dossiers `conf.d` et `sites-enabled` que nous avons vu précédemment.
 
 
 ## 4.4. MySQL et PhpMyAdmin
@@ -277,63 +268,51 @@ Guide suivit : [How To Install the Latest MySQL on Debian 10](https://www.digita
 Voici les identifiants de connexion à la base de données : 
 
 ```bash
+DB_Name : phpmyadmin
+host : localhost
 User: root
-Password: pass: ' '
+Password: ' ' # (spacebar character)
 ```
-
 
 **Installation de PhpMyAdmin** : 
 
-Guide suivit : [How To Install phpMyAdmin with Nginx on Debian 11 / Debian 10](https://www.itzgeek.com/how-tos/linux/debian/how-to-install-phpmyadmin-with-nginx-on-debian-10.html)
+Guide suivit : [How To Install and Secure phpMyAdmin on Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/how-to-install-and-secure-phpmyadmin-on-ubuntu-20-04)
 
 
+Étapes importantes :
+- `sudo apt install phpmyadmin php-mbstring php-zip php-gd php-json php-curl` : installation de PhpMyAdmin et les dépendances
 
+installer phpmyadmin via apt-get lance un utilitaire de configuration qui permet de configurer automatiquement le serveur web et la base de données. Il suffit de suivre les instructions.
 
-Le serveur apache est déjà installé sur la VM et utilise le port 80, il est donc necessaire de stopper le service apache : `sudo systemctl stop apache2.service`.
+Dans les options de configuration, il y a pas d'option pour choisir `nginx` mais apache2 est utilisé par défaut. Cela pose un conflit car apache2 est déjà installé sur la VM et utilise le port 80. Il est donc necessaire de stopper le service apache : `sudo systemctl stop apache2.service`.
 
+Voici les identifiants de connexion à phpmyadmin : 
 
-Name DB : phpmyadmin
-host : localhost
-
-user : pma               // n'as pas les droits root (je pense que c'est mieux de prendre ça pour Wordpress)
-pass: pmapass
-
-root user : root         // du coup ça c'est plus pour modif a la main je pense 
-root pass: ' '
-
+```bash
+User : pma
+Password: pmapass
+```
 
 ### 4.3.a. Configuration de Nginx avec PhpMyAdmin
 
-La configutaion de PhpMyAdmin est similaire à celle de Wordpress. Nous allons donc créer un nouveau fichier de configiration pour qu'il prenne en compte PhpMyAdmin :
+La configutaion de PhpMyAdmin est similaire à celle de Wordpress. Nous allons donc ajouter une route dans le fichier de configuration de Nginx.
 
-```bash
-zprojet@debian:/etc/nginx/sites-available$ ls
-default  phpmyadmin.conf  wordpress.conf
-```
-
-Voici le contenu du fichier `phpmyadmin.conf` : 
+Nous allons ajouter ceci dans `server` de `cms.conf` vu précédemment : 
 
 ```conf
-server {
-  listen 80;
-  root /var/www/html/phpmyadmin;
-  index index.php index.html index.htm;
-  server_name codybenjam.ddns.net;
-  access_log /var/log/nginx/wordpress_access.log;
-  error_log /var/log/nginx/wordpress_error.log;
-  client_max_body_size 64M;
-  location /phpmyadmin {
-    try_files $uri $uri/ /index.php?$args;
-  }
+location /phpmyadmin {
+  alias /var/www/html/phpmyadmin;
+  index index.php;
 
   location ~ \.php$ {
     try_files $uri =404;
+    fastcgi_split_path_info ^(.+\.php)(/.+)$;
     include /etc/nginx/fastcgi_params;
     fastcgi_read_timeout 3600s;
     fastcgi_buffer_size 128k;
     fastcgi_buffers 4 128k;
-    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-    fastcgi_pass unix:/run/php/php7.3-fpm.sock;
+    fastcgi_param SCRIPT_FILENAME $request_filename;
+    fastcgi_pass unix:/run/php/php7.4-fpm.sock;
     fastcgi_index index.php;
   }
 }
@@ -467,7 +446,7 @@ add_header X-Content-Type-Options nosniff;
 add_header X-XSS-Protection "1; mode=block";
 ```
 
-Maintenant, rendez-vous dans le fichier de configuration de Nginx `/etc/nginx/sites-enabled/wordpress.conf` et ajouter les lignes suivantes :
+Maintenant, rendez-vous dans le fichier de configuration de Nginx `/etc/nginx/sites-enabled/cms.conf` et ajouter les lignes suivantes :
 
 ```bash
 server {
@@ -484,9 +463,25 @@ server {
 Enfin, redémarrer Nginx avec `sudo systemctl restart nginx` pour prendre en compte les modifications.
 
 /!\ Malheureusement cette solution n'a pas fonctionné et les logs ne nous on pas permi d'identifier le problème. Une solution que nous aurions proposé est d'utiliser Nginx Proxy Manager qui permet de gérer les certificats SSL de manière plus simple et intuitive via une interface web. Néanmoins, cette solution necessite l'enmploi d'un Docker ce qui n'étais pas le but ici.
+# 7. Monitoring : Check MK
 
+Le site peut être démarré avec `omd start monitoring`.
+L'interface Web par défaut est disponible à l'adresse http://debian/monitoring/
 
-# 6. Monitoring : Check MK
+Les sites suivants sont disponibles :
+- [cmkbdezordo.istic.univ-rennes1.fr](cmkbdezordo.istic.univ-rennes1.fr)
+- [http://148.60.11.204/monitoring](http://148.60.11.204/monitoring)
+- [cmkbdezordo.istic.univ-rennes1.fr/monitoring](cmkbdezordo.istic.univ-rennes1.fr/monitoring)
+
+L'utilisateur administrateur pour les applications Web est `cmkadmin` avec le mot de passe : `9G3cMerJ`
+Pour l'administration en ligne de commande du site, connectez-vous avec `omd su monitoring`.
+Après vous être connecté, vous pouvez changer le mot de passe pour `cmkadmin` avec `cmk-passwd cmkadmin`.
+
+# 8. Conclusion
+
+Au terme de ce document, nous avons présenté les choix technologiques et les étapes nécessaires pour mettre en place un CMS au sein de l'entreprise TechnoGenix. Nous avons choisi d'utiliser Wordpress comme CMS, Nginx comme serveur web, MySQL comme système de gestion de base de données et PhpMyAdmin pour faciliter la gestion de la base de données.
+
+Nous avons décrit la procédure de création d'une VM Debian, l'installation des composants nécessaires, la configuration des différents services et la sécurisation de l'ensemble grâce à un certificat auto-signé SSL. Nous avons également abordé l'initialisation du CMS et la création de différents profils d'utilisateurs pour répondre aux exigences fonctionnelles de l'entreprise.
 
 Le monitoring permet surveiller l'état et les performances des différents composants d'un système informatique (serveurs, réseaux, applications, etc.) afin de détecter les problèmes potentiels et pouvoir réagir rapidement en cas de dysfonctionnement.
 
@@ -516,7 +511,9 @@ Enfin nous devons dire à Check Mk vers qui se tourner pour établir la communic
 
 ![checkmk](assets/4_check_mk_host.png)
 
+Cependant, il est important de souligner que certaines améliorations peuvent encore être apportées au système, telles que l'optimisation des performances, la mise en place de sauvegardes régulières et l'intégration de mécanismes de surveillance plus avancés.
 
+Enfin, il convient de réfléchir à la manière dont le système pourrait évoluer et s'adapter à une charge croissante si le nombre d'utilisateurs venait à augmenter significativement. Il faudra ainsi envisager la possibilité de mettre en place des solutions de scalabilité, telles que la répartition de charge, la mise en cache ou l'utilisation de CDN pour optimiser les performances et assurer la disponibilité du site.
 
 # 7. Mot de passe et aspect d'amélioration
 
