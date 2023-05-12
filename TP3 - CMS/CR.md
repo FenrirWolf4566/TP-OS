@@ -1,8 +1,53 @@
 
 
+- [1. Introduction](#1-introduction)
+- [2. Choix des technologies](#2-choix-des-technologies)
+- [Prérequis](#prérequis)
+- [1. Installation de Nginx (tutoriel)](#1-installation-de-nginx-tutoriel)
+- [2. Wordpress](#2-wordpress)
+  - [a. Installation de Wordpress](#a-installation-de-wordpress)
+  - [b. Configuration de Nginx avec Wordpress](#b-configuration-de-nginx-avec-wordpress)
+- [2. MySQL et PhpMyAdmin](#2-mysql-et-phpmyadmin)
+  - [b. Configuration de Nginx avec PhpMyAdmin](#b-configuration-de-nginx-avec-phpmyadmin)
+  - [c. Connexion de la base de donnée à Wordpress](#c-connexion-de-la-base-de-donnée-à-wordpress)
+- [3. Initialisation du CMS](#3-initialisation-du-cms)
+  - [a. Ajout d'utilisateurs](#a-ajout-dutilisateurs)
+- [4. Certificat auto-signé SSL tutoriel](#4-certificat-auto-signé-ssl-tutoriel)
+  - [a. Génération du certificat](#a-génération-du-certificat)
+  - [b. Configuration de Nginx](#b-configuration-de-nginx)
 
----
-# Prérequis
+
+# 1. Introduction 
+
+Le présent document traite de l'installation et de la configuration d'un système de gestion de contenu (CMS) pour l'entreprise fictive TechnoGenix. TechnoGenix est une entreprise spécialisée dans le développement de solutions technologiques innovantes et la fourniture de services d'expertise dans le domaine de l'informatique. Ses clients sont principalement des entreprises du secteur des technologies de l'information et de la communication (TIC), des organismes publics et des institutions éducatives.
+
+Le service informatique de TechnoGenix a identifié le besoin de créer un site vitrine sur Internet pour promouvoir les produits et services de l'entreprise. Pour répondre à ce besoin, le service informatique a choisi de déployer un CMS, qui permettra aux membres de l'équipe de communication de gérer facilement le contenu du site web sans avoir besoin de compétences techniques avancées. De plus, le service informatique souhaite que le CMS soit basé sur des technologies maîtrisées par l'équipe, telles que Debian ou Ubuntu, Apache ou Nginx, MySQL / MariaDB ou PostgreSQL.
+
+Ce document décrit en détail la procédure d'installation et de configuration du CMS, ainsi que les exigences techniques et fonctionnelles qui doivent être respectées. Il servira de guide pour les personnes chargées de l'installation et de la maintenance du CMS, ainsi que pour les membres du service communication et du service informatique qui souhaitent comprendre les choix techniques réalisés et les étapes suivies pour mettre en place le système.
+
+
+# 2. Choix des technologies
+
+Choix des technologies et argumentation
+
+Afin de mettre en place un système de gestion de contenu adapté aux besoins de l'entreprise TechnoGenix, plusieurs choix technologiques ont été effectués. Dans cette section, nous présentons ces choix et expliquons les raisons qui ont motivé ces décisions.
+
+1. CMS : Wordpress a été choisi comme CMS pour le site vitrine de TechnoGenix en raison de sa popularité et de son caractère open-source. En effet, Wordpress est largement utilisé dans l'industrie, ce qui garantit un support communautaire important et une multitude de plugins disponibles pour étendre ses fonctionnalités. De plus, son caractère open-source permet une personnalisation et une adaptation aux besoins spécifiques de l'entreprise.
+
+2. Base de données : MySQL a été sélectionné comme système de gestion de base de données (SGBD) pour le CMS. Bien que MariaDB aurait également pu être utilisé, MySQL a été préféré en raison de sa compatibilité éprouvée avec Wordpress et de sa réputation en tant que solution performante et fiable. Néanmoins, MariaDB, étant un fork de MySQL, aurait également été une option viable.
+
+3. Superviseur : CheckMK a été choisi comme outil de supervision du CMS et des services associés. CheckMK permet une surveillance efficace des performances du système, ainsi que la détection rapide des problèmes éventuels, ce qui est essentiel pour garantir la disponibilité et la fiabilité du site vitrine.
+
+4. Serveur : NGINX a été sélectionné comme serveur web pour héberger le CMS. NGINX offre des performances élevées et une gestion efficace des ressources, ce qui est particulièrement avantageux pour les sites à fort trafic. De plus, sa configuration flexible et sa compatibilité avec de nombreuses technologies en font un choix judicieux pour le projet.
+
+5. Distribution : Debian a été choisie comme distribution Linux pour héberger le CMS et les services associés. Debian est réputée pour sa stabilité et sa fiabilité, ce qui en fait un choix approprié pour un environnement de production. De plus, la compatibilité de Debian avec les autres technologies sélectionnées assure une intégration harmonieuse des différents éléments du système.
+
+6. Déploiement : Les machines virtuelles (VM) de l'ISTIC ont été utilisés pour déployer le CMS, conformément aux exigences du projet. Ces templates facilitent la mise en place rapide et sécurisée de l'environnement nécessaire pour le CMS et les services associés. 
+
+7. Outils : phpMyAdmin a été choisi comme outil de gestion de la base de données MySQL. phpMyAdmin permet une gestion simplifiée et conviviale des bases de données, ce qui facilite la maintenance et l'administration du CMS par les membres de l'équipe informatique.
+
+
+# 3. Prérequis
 
 Pour ce TP nous avons utiliser les VM de l'ISTIC dont l'ip est la suivante : `148.60.11.67`.
 Nous avons également utiliser un nom de domaine : `http://codybenji-cms.istic.univ-rennes1.fr` qui pointe vers l'IP de la VM sous Debian.
@@ -17,7 +62,9 @@ Nous nous sommes aidé de certains tutoriel pour installer ces outils qui seront
 Avant de faire quoi que ce soit, il faut se connecter en SSH au serveur puis  mettre à jour la liste des paquets disponibles et leurs versions avec la commande suivante : `sudo apt update`.
 
 
-# 1. Installation de Nginx ([tutoriel](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-debian-10))
+# 4. Installation et configuration
+
+## 4.1. Installation de Nginx ([tutoriel](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-debian-10))
 
 Nginx permet de faire le pont entre notre serveur et le client ; il permet de gérer les requetes HTTP et HTTPS.
 
@@ -34,7 +81,7 @@ Pour vérifier que Nginx est bien installé, il faut taper l'adresse IP de la VM
 ![nginx_congrat](/TP3%20-%20CMS/assets/1_nginx_congrat.png)
 
 
-# 2. Wordpress
+## 4.2. Wordpress
 
 Wordpress est un CMS opensource qui permet de créer des sites web dynamiques. Selon le site [Saleforce](https://www.salesforce.com/fr/resources/articles/definition-cms/#topic2), un CMS est un outil qui permet de "créer, de gérer et de modifier facilement un site web, sans avoir besoin de connaissances techniques en langage informatique".
 
@@ -42,7 +89,7 @@ Il fait notamenent partie de WySiWyg (What You See Is What You Get) qui est un �
 
 Pour l'installation de Wordpress nous n'avons pas suivis qu'un seul tutoriel mais une multitudes qui nous ont données des informations complémentaires : [Digital Ocean](https://www.digitalocean.com/community/tutorials/how-to-install-wordpress-with-lemp-nginx-mariadb-and-php-on-debian-10), [Spinupwp](https://spinupwp.com/hosting-wordpress-yourself-complete-nginx-configuration/).
 
-## a. Installation de Wordpress
+### 4.2.a. Installation de Wordpress
 
 Nous devons nous rendre dans le dossier `/var/www/html/` qui est le dossier racine de Nginx. Pour cela il faut utiliser la commande suivante : `cd /var/www/html/`.
 
@@ -60,7 +107,7 @@ readme.html      wp-comments-post.php  wp-includes        wp-mail.php      xmlrp
 wp-activate.php  wp-config.php         wp-links-opml.php  wp-settings.php
 ```
 
-## b. Configuration de Nginx avec Wordpress
+### 4.2.b. Configuration de Nginx avec Wordpress
 
 Nginx possède un dossier contenant des fichiers de configuration : `/etc/nginx/sites-available/`. Nous allons donc créer un nouveau fichier de configiration pour qu'il prenne en compte Wordpress :
 
@@ -171,7 +218,7 @@ http {
 Nous avons ajouter les deux dernières lignes.
 
 
-# 2. MySQL et PhpMyAdmin
+## 4.3. MySQL et PhpMyAdmin
 
 [Install MySQL](https://www.digitalocean.com/community/tutorials/how-to-install-the-latest-mysql-on-debian-10)
 
@@ -188,7 +235,7 @@ root user : root         // du coup ça c'est plus pour modif a la main je pense
 root pass: ' '
 
 
-## b. Configuration de Nginx avec PhpMyAdmin
+### 4.3.a. Configuration de Nginx avec PhpMyAdmin
 
 La configutaion de PhpMyAdmin est similaire à celle de Wordpress. Nous allons donc créer un nouveau fichier de configiration pour qu'il prenne en compte PhpMyAdmin :
 
@@ -199,7 +246,7 @@ default  phpmyadmin.conf  wordpress.conf
 
 Voici le contenu du fichier `phpmyadmin.conf` : 
 
-```php
+```conf
 server {
   listen 80;
   root /var/www/html/phpmyadmin;
@@ -225,7 +272,7 @@ server {
 }
 ```
 
-## c. Connexion de la base de donnée à Wordpress
+### 4.3.b. Connexion de la base de donnée à Wordpress
 
 Pour que Wordpress puisse se connecter à la base de donnée il faut modifier le fichier `wp-config.php` :
 
@@ -267,7 +314,7 @@ define( 'DB_COLLATE', '' );
 ...
 ```
 
-# 3. Initialisation du CMS
+# 5. Initialisation du CMS
 
 Maintenant que nous avons installé Wordpress et PhpMyAdmin nous allons pouvoir initialiser le CMS en nous rendont sur l'adresse IP de notre serveur.
 
@@ -275,7 +322,7 @@ Maintenant que nous avons installé Wordpress et PhpMyAdmin nous allons pouvoir 
 
 Une fois avoir remplis les informations, créer un utiliateur et cliqué sur "Installer Wordpress" nous arrivons sur la page de connexion. En effet le CMS nous offre une interface d'administration sécurisée par une authentification individuelle.
 
-## a. Ajout d'utilisateurs
+## 5.1. Ajout d'utilisateurs
 
 Nous souhaitons avoir plusieurs utilisateurs avec des rôles différents, pour cela une fois connexté au CMS nous allons dans "Utilisateurs" puis "Ajouter".
 
@@ -289,9 +336,9 @@ Les trois utilisateurs créer sont :
 
 
 
-# 4. Certificat auto-signé SSL [tutoriel](https://www.tremplin-numerique.org/comment-creer-et-utiliser-un-ssl-auto-signe-dans-nginx-cloudsavvy-it)
+# 6. Certificat auto-signé SSL [tutoriel](https://www.tremplin-numerique.org/comment-creer-et-utiliser-un-ssl-auto-signe-dans-nginx-cloudsavvy-it)
 
-## a. Génération du certificat
+## 6.a. Génération du certificat
 
 Pour générer un certificat auto-signé SSL, il faut utiliser l'utilitaire `openssl` : `sudo apt-get install openssl`.
 
@@ -321,7 +368,7 @@ Common Name (e.g. server FQDN or YOUR name) []:http://codybenji-cms.istic.univ-r
 Email Address []:bdezordo@gmail.com
 ```
 
-## b. Configuration de Nginx
+## 6.b. Configuration de Nginx
 
 Pour que Nginx prenne en compte le certificat il faut créer un fichier de configuration `self-signed.conf` dans le dossier `/etc/nginx/snippets/` :
 

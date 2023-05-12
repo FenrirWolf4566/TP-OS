@@ -70,3 +70,11 @@ password : zebulon
 ```
 
 Une fois connecté, vous pourrez accéder et gérer la VM en utilisant les commandes et les outils Linux habituels.
+
+## 3.4. Installation de NGINX
+
+## 3.5. Installation de MySQL
+
+## 3.3. Installation de Wordpress
+
+## 3.6. Installation de phpMyAdmin
