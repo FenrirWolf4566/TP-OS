@@ -2,19 +2,23 @@
 
 - [1. Introduction](#1-introduction)
 - [2. Choix des technologies](#2-choix-des-technologies)
-- [Prérequis](#prérequis)
-- [1. Installation de Nginx (tutoriel)](#1-installation-de-nginx-tutoriel)
-- [2. Wordpress](#2-wordpress)
-  - [a. Installation de Wordpress](#a-installation-de-wordpress)
-  - [b. Configuration de Nginx avec Wordpress](#b-configuration-de-nginx-avec-wordpress)
-- [2. MySQL et PhpMyAdmin](#2-mysql-et-phpmyadmin)
-  - [b. Configuration de Nginx avec PhpMyAdmin](#b-configuration-de-nginx-avec-phpmyadmin)
-  - [c. Connexion de la base de donnée à Wordpress](#c-connexion-de-la-base-de-donnée-à-wordpress)
-- [3. Initialisation du CMS](#3-initialisation-du-cms)
-  - [a. Ajout d'utilisateurs](#a-ajout-dutilisateurs)
-- [4. Certificat auto-signé SSL tutoriel](#4-certificat-auto-signé-ssl-tutoriel)
-  - [a. Génération du certificat](#a-génération-du-certificat)
-  - [b. Configuration de Nginx](#b-configuration-de-nginx)
+- [3. Prérequis](#3-prérequis)
+- [4. Installation et configuration](#4-installation-et-configuration)
+  - [4.1. Initialisation de la VM](#41-initialisation-de-la-vm)
+    - [4.1.1. Création de la VM Debian](#411-création-de-la-vm-debian)
+    - [4.1.b Connection à la VM](#41b-connection-à-la-vm)
+  - [4.2. Installation de Nginx (tutoriel)](#42-installation-de-nginx-tutoriel)
+  - [4.3. Wordpress](#43-wordpress)
+    - [4.2.a. Installation de Wordpress](#42a-installation-de-wordpress)
+    - [4.2.b. Configuration de Nginx avec Wordpress](#42b-configuration-de-nginx-avec-wordpress)
+  - [4.4. MySQL et PhpMyAdmin](#44-mysql-et-phpmyadmin)
+    - [4.3.a. Configuration de Nginx avec PhpMyAdmin](#43a-configuration-de-nginx-avec-phpmyadmin)
+    - [4.3.b. Connexion de la base de donnée à Wordpress](#43b-connexion-de-la-base-de-donnée-à-wordpress)
+- [5. Initialisation du CMS](#5-initialisation-du-cms)
+  - [5.1. Ajout d'utilisateurs](#51-ajout-dutilisateurs)
+- [6. Certificat auto-signé SSL tutoriel](#6-certificat-auto-signé-ssl-tutoriel)
+  - [6.1. Génération du certificat](#61-génération-du-certificat)
+  - [6.2. Configuration de Nginx](#62-configuration-de-nginx)
 
 
 # 1. Introduction 
@@ -32,39 +36,71 @@ Choix des technologies et argumentation
 
 Afin de mettre en place un système de gestion de contenu adapté aux besoins de l'entreprise TechnoGenix, plusieurs choix technologiques ont été effectués. Dans cette section, nous présentons ces choix et expliquons les raisons qui ont motivé ces décisions.
 
-1. CMS : Wordpress a été choisi comme CMS pour le site vitrine de TechnoGenix en raison de sa popularité et de son caractère open-source. En effet, Wordpress est largement utilisé dans l'industrie, ce qui garantit un support communautaire important et une multitude de plugins disponibles pour étendre ses fonctionnalités. De plus, son caractère open-source permet une personnalisation et une adaptation aux besoins spécifiques de l'entreprise.
+1. **CMS** : Wordpress a été choisi comme CMS pour le site vitrine de TechnoGenix en raison de sa popularité et de son caractère open-source. En effet, Wordpress est largement utilisé dans l'industrie, ce qui garantit un support communautaire important et une multitude de plugins disponibles pour étendre ses fonctionnalités. De plus, son caractère open-source permet une personnalisation et une adaptation aux besoins spécifiques de l'entreprise.
 
-2. Base de données : MySQL a été sélectionné comme système de gestion de base de données (SGBD) pour le CMS. Bien que MariaDB aurait également pu être utilisé, MySQL a été préféré en raison de sa compatibilité éprouvée avec Wordpress et de sa réputation en tant que solution performante et fiable. Néanmoins, MariaDB, étant un fork de MySQL, aurait également été une option viable.
+2. **Base de données** : MySQL a été sélectionné comme système de gestion de base de données (SGBD) pour le CMS. Bien que MariaDB aurait également pu être utilisé, MySQL a été préféré en raison de sa compatibilité éprouvée avec Wordpress et de sa réputation en tant que solution performante et fiable. Néanmoins, MariaDB, étant un fork de MySQL, aurait également été une option viable.
 
-3. Superviseur : CheckMK a été choisi comme outil de supervision du CMS et des services associés. CheckMK permet une surveillance efficace des performances du système, ainsi que la détection rapide des problèmes éventuels, ce qui est essentiel pour garantir la disponibilité et la fiabilité du site vitrine.
+3. **Superviseur** : CheckMK a été choisi comme outil de supervision du CMS et des services associés. CheckMK permet une surveillance efficace des performances du système, ainsi que la détection rapide des problèmes éventuels, ce qui est essentiel pour garantir la disponibilité et la fiabilité du site vitrine.
 
-4. Serveur : NGINX a été sélectionné comme serveur web pour héberger le CMS. NGINX offre des performances élevées et une gestion efficace des ressources, ce qui est particulièrement avantageux pour les sites à fort trafic. De plus, sa configuration flexible et sa compatibilité avec de nombreuses technologies en font un choix judicieux pour le projet.
+4. **Serveur** : NGINX a été sélectionné comme serveur web pour héberger le CMS. NGINX offre des performances élevées et une gestion efficace des ressources, ce qui est particulièrement avantageux pour les sites à fort trafic. De plus, sa configuration flexible et sa compatibilité avec de nombreuses technologies en font un choix judicieux pour le projet.
 
-5. Distribution : Debian a été choisie comme distribution Linux pour héberger le CMS et les services associés. Debian est réputée pour sa stabilité et sa fiabilité, ce qui en fait un choix approprié pour un environnement de production. De plus, la compatibilité de Debian avec les autres technologies sélectionnées assure une intégration harmonieuse des différents éléments du système.
+5. **Distribution** : Debian a été choisie comme distribution Linux pour héberger le CMS et les services associés. Debian est réputée pour sa stabilité et sa fiabilité, ce qui en fait un choix approprié pour un environnement de production. De plus, la compatibilité de Debian avec les autres technologies sélectionnées assure une intégration harmonieuse des différents éléments du système.
 
-6. Déploiement : Les machines virtuelles (VM) de l'ISTIC ont été utilisés pour déployer le CMS, conformément aux exigences du projet. Ces templates facilitent la mise en place rapide et sécurisée de l'environnement nécessaire pour le CMS et les services associés. 
+6. **Déploiement** : Les machines virtuelles (VM) de l'ISTIC ont été utilisés pour déployer le CMS, conformément aux exigences du projet. Ces templates facilitent la mise en place rapide et sécurisée de l'environnement nécessaire pour le CMS et les services associés. 
 
-7. Outils : phpMyAdmin a été choisi comme outil de gestion de la base de données MySQL. phpMyAdmin permet une gestion simplifiée et conviviale des bases de données, ce qui facilite la maintenance et l'administration du CMS par les membres de l'équipe informatique.
+7. **Outils** : phpMyAdmin a été choisi comme outil de gestion de la base de données MySQL. phpMyAdmin permet une gestion simplifiée et conviviale des bases de données, ce qui facilite la maintenance et l'administration du CMS par les membres de l'équipe informatique.
 
 
 # 3. Prérequis
 
 Pour ce TP nous avons utiliser les VM de l'ISTIC dont l'ip est la suivante : `148.60.11.67`.
-Nous avons également utiliser un nom de domaine : `http://codybenji-cms.istic.univ-rennes1.fr` qui pointe vers l'IP de la VM sous Debian.
+Nous avons également utiliser un nom de domaine : [codybenji-cms.istic.univ-rennes1.from](http://codybenji-cms.istic.univ-rennes1.fr) qui pointe vers l'IP de la VM sous Debian.
 
-Notre choix s'est porté sur les outils : 
-- Wordpress : un CMS opensource,
-- Nginx : un serveur web,
-- MySQL / PhpMyAdmin : une base de données et son interface d'administration.
-
-Nous nous sommes aidé de certains tutoriel pour installer ces outils qui seront cités dans chaque partie de ce document.
-
-Avant de faire quoi que ce soit, il faut se connecter en SSH au serveur puis  mettre à jour la liste des paquets disponibles et leurs versions avec la commande suivante : `sudo apt update`.
+Nous nous sommes aidé de certains tutoriels pour installer ces outils qui seront cités dans chaque partie de ce document.
 
 
 # 4. Installation et configuration
 
-## 4.1. Installation de Nginx ([tutoriel](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-debian-10))
+## 4.1. Initialisation de la VM 
+
+### 4.1.1. Création de la VM Debian
+
+Afin de créer la machine virtuelle (VM) Debian pour héberger le CMS et les services associés, nous avons utilisé le système mis en place par l'ISTIC. Ce système permet de créer et de gérer des VMs à distance via une interface web accessible à l'adresse suivante : [vm.istic.univ-rennes1.fr](https://vm.istic.univ-rennes1.fr/).
+
+Pour créer la VM Debian, suivez les étapes ci-dessous :
+
+1. Connectez-vous à l'interface web de gestion des VMs de l'ISTIC à l'adresse [vm.istic.univ-rennes1.fr](https://vm.istic.univ-rennes1.fr/) en utilisant vos identifiants ENT.
+2. Cliquez sur le bouton "Demander une VM".
+3. Sélectionnez le template de VM Debian dans la liste des templates disponibles.
+4. Remplissez les informations requises pour la nouvelle VM, telles que le nom, la taille de la mémoire et du disque, etc.
+
+Une fois la VM Debian créée, vous pourrez y accéder en utilisant le protocole SSH. Pour ce faire, vous devez vous assurer d'être connecté au réseau de l'ISTIC ou d'utiliser le VPN de l'ISTIC pour accéder au réseau depuis un emplacement distant.
+
+Note : Les informations d'authentification et l'adresse IP de la VM vous seront fournies une fois la VM créée. Conservez ces informations en lieu sûr, car elles seront nécessaires pour accéder à la VM et la configurer ultérieurement.
+
+### 4.1.b Connection à la VM
+
+Pour vous connecter à la VM de notre entreprise, vous devez utiliser les identifiants suivants. Veuillez noter qu'il est important de changer le mot de passe par défaut en utilisant la commande `sudo passwd`, ce que nous avons déjà fait.
+
+Pour établir une connexion SSH à la VM, utilisez la commande suivante :
+
+```bash
+# avec l'ip de la VM
+ssh zprojet@148.60.11.67
+# ou alors avec le nom de domaine
+ssh zprojet@codybenji-cms.istic.univ-rennes1.fr
+```
+
+Lorsqu'il vous sera demandé, saisissez le mot de passe :
+
+```bash
+password: zebulon
+```
+
+Une fois connecté, vous pourrez accéder et gérer la VM en utilisant les commandes et les outils Linux habituels.
+Avant de faire quoi que ce soit, il faut mettre à jour la liste des paquets disponibles et leurs versions avec la commande suivante : `sudo apt update`.
+
+## 4.2. Installation de Nginx ([tutoriel](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-debian-10))
 
 Nginx permet de faire le pont entre notre serveur et le client ; il permet de gérer les requetes HTTP et HTTPS.
 
@@ -72,7 +108,6 @@ Pour l'installer NGINX, il faut utiliser la commande suivante : `sudo apt instal
 
 > Sur le tutoriel le firewall de debian (ufw) est utilisé, néanmoins pour plus de practicité nous avons décidé de ne pas l'utiliser bien que dans un contexte de sécurité il est préférable de l'utiliser.
 
-Le serveur apache est déjà installé sur la VM et utilise le port 80, il est donc necessaire de stopper le service apache : `sudo systemctl stop apache2.service`.
 
 Enfin, pour lancer le service Nginx il faut utiliser la commande suivante : `sudo systemctl start nginx`.
 
@@ -81,7 +116,7 @@ Pour vérifier que Nginx est bien installé, il faut taper l'adresse IP de la VM
 ![nginx_congrat](/TP3%20-%20CMS/assets/1_nginx_congrat.png)
 
 
-## 4.2. Wordpress
+## 4.3. Wordpress
 
 Wordpress est un CMS opensource qui permet de créer des sites web dynamiques. Selon le site [Saleforce](https://www.salesforce.com/fr/resources/articles/definition-cms/#topic2), un CMS est un outil qui permet de "créer, de gérer et de modifier facilement un site web, sans avoir besoin de connaissances techniques en langage informatique".
 
@@ -218,11 +253,37 @@ http {
 Nous avons ajouter les deux dernières lignes.
 
 
-## 4.3. MySQL et PhpMyAdmin
+## 4.4. MySQL et PhpMyAdmin
 
-[Install MySQL](https://www.digitalocean.com/community/tutorials/how-to-install-the-latest-mysql-on-debian-10)
+### 4.4.a. Installation de MySQL et PhpMyAdmin
 
-[Install PhpMyAdmin](https://www.itzgeek.com/how-tos/linux/debian/how-to-install-phpmyadmin-with-nginx-on-debian-10.html)
+
+**Installation de MySQL** : 
+
+Guide suivit : [How To Install the Latest MySQL on Debian 10](https://www.digitalocean.com/community/tutorials/how-to-install-the-latest-mysql-on-debian-10)
+
+
+Étapes importantes :
+- `sudo apt install mysql-server` : installation de MySQL
+- `mysql_secure_installation` : configuration de MySQL (mot de passe root, ...)
+- `sudo systemctl start mysql` : démarrage du service MySQL
+
+Voici les identifiants de connexion à la base de données : 
+
+```bash
+User: root
+Password: pass: ' '
+```
+
+
+**Installation de PhpMyAdmin** : 
+
+Guide suivit : [How To Install phpMyAdmin with Nginx on Debian 11 / Debian 10](https://www.itzgeek.com/how-tos/linux/debian/how-to-install-phpmyadmin-with-nginx-on-debian-10.html)
+
+
+
+
+Le serveur apache est déjà installé sur la VM et utilise le port 80, il est donc necessaire de stopper le service apache : `sudo systemctl stop apache2.service`.
 
 
 Name DB : phpmyadmin
@@ -338,7 +399,7 @@ Les trois utilisateurs créer sont :
 
 # 6. Certificat auto-signé SSL [tutoriel](https://www.tremplin-numerique.org/comment-creer-et-utiliser-un-ssl-auto-signe-dans-nginx-cloudsavvy-it)
 
-## 6.a. Génération du certificat
+## 6.1. Génération du certificat
 
 Pour générer un certificat auto-signé SSL, il faut utiliser l'utilitaire `openssl` : `sudo apt-get install openssl`.
 
@@ -368,7 +429,7 @@ Common Name (e.g. server FQDN or YOUR name) []:http://codybenji-cms.istic.univ-r
 Email Address []:bdezordo@gmail.com
 ```
 
-## 6.b. Configuration de Nginx
+## 6.2. Configuration de Nginx
 
 Pour que Nginx prenne en compte le certificat il faut créer un fichier de configuration `self-signed.conf` dans le dossier `/etc/nginx/snippets/` :
 
