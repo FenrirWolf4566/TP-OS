@@ -289,4 +289,88 @@ Les trois utilisateurs créer sont :
 
 
 
-# 4. Certificat SSL
+# 4. Certificat auto-signé SSL [tutoriel](https://www.tremplin-numerique.org/comment-creer-et-utiliser-un-ssl-auto-signe-dans-nginx-cloudsavvy-it)
+
+## a. Génération du certificat
+
+Pour générer un certificat auto-signé SSL, il faut utiliser l'utilitaire `openssl` : `sudo apt-get install openssl`.
+
+Générer le certificat en remplissant les champs demandés :
+```sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx.key -out /etc/ssl/certs/nginx.crt```
+
+ ```bash	
+ zprojet@debian:/var/www/html/wordpress$ sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx.key -out /etc/ssl/certs/nginx.crt
+Generating a RSA private key
+....+++++
+.......+++++
+writing new private key to '/etc/ssl/private/nginx.key'
+-----
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:FR
+State or Province Name (full name) [Some-State]:Britany
+Locality Name (eg, city) []:Rennes
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:esir
+Organizational Unit Name (eg, section) []:esir
+Common Name (e.g. server FQDN or YOUR name) []:http://codybenji-cms.istic.univ-rennes1.fr
+Email Address []:bdezordo@gmail.com
+```
+
+## b. Configuration de Nginx
+
+Pour que Nginx prenne en compte le certificat il faut créer un fichier de configuration `self-signed.conf` dans le dossier `/etc/nginx/snippets/` :
+
+```bash
+zprojet@debian:/home$ cd /etc/nginx/snippets
+zprojet@debian:/etc/nginx/snippets$ ls
+fastcgi-php.conf  snakeoil.conf
+zprojet@debian:/etc/nginx/snippets$ touch self-signed.conf
+zprojet@debian:/etc/nginx/snippets$ ls
+fastcgi-php.conf  self-signed.conf  snakeoil.conf
+```
+
+```bash
+ssl_certificate /etc/ssl/certs/nginx.crt;
+ssl_certificate_key /etc/ssl/private/nginx.key;
+
+ssl_protocols TLSv1.2;
+ssl_prefer_server_ciphers on;
+ssl_ciphers ECDHE-RSA-AES256-GCM-SHA512:DHE-RSA-AES256-GCM-SHA512:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA384;
+ssl_session_timeout 10m;
+ssl_session_cache shared:SSL:10m;
+ssl_session_tickets off;
+ssl_stapling on;
+ssl_stapling_verify on;
+resolver 8.8.8.8 8.8.4.4 valid=300s;
+resolver_timeout 5s;
+add_header X-Frame-Options DENY;
+add_header X-Content-Type-Options nosniff;
+add_header X-XSS-Protection "1; mode=block";
+
+ssl_dhparam /etc/nginx/dhparam.pem;
+ssl_ecdh_curve secp384r1;
+```
+
+Maintenant, rendez-vous dans le fichier de configuration de Nginx `/etc/nginx/sites-enabled/wordpress.conf` et ajouter les lignes suivantes :
+
+```bash
+server {
+    listen 443 ssl;
+    listen (::):443 ssl;
+
+    include ../snippets/self-signed.conf;
+
+    server_name codybenji-cms.istic.univ-rennes1.fr www.codybenji-cms.istic.univ-rennes1.fr;
+    . . .
+}
+```
+
+Enfin, redémarrer Nginx avec `sudo systemctl restart nginx` pour prendre en compte les modifications.
+
+
+
