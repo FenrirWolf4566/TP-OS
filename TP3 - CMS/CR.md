@@ -374,3 +374,20 @@ Enfin, redémarrer Nginx avec `sudo systemctl restart nginx` pour prendre en com
 
 
 
+
+
+
+
+# 6. Monitoring : Check MK
+
+  The site can be started with omd start monitoring.
+  The default web UI is available at http://debian/monitoring/
+
+cmkbdezordo.istic.univ-rennes1.fr
+  http://148.60.11.204/monitoring
+  cmkbdezordo.istic.univ-rennes1.fr/monitoring
+
+
+  The admin user for the web applications is cmkadmin with password: 9G3cMerJ
+  For command line administration of the site, log in with 'omd su monitoring'.
+  After logging in, you can change the password for cmkadmin with 'cmk-passwd cmkadmin'.
