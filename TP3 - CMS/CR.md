@@ -462,8 +462,6 @@ Enfin, redémarrer Nginx avec `sudo systemctl restart nginx` pour prendre en com
 
 # 7. Monitoring : Check MK
 
-# 7. Monitoring : Check MK
-
 Le site peut être démarré avec `omd start monitoring`.
 L'interface Web par défaut est disponible à l'adresse http://debian/monitoring/
 
