@@ -224,3 +224,69 @@ server {
   }
 }
 ```
+
+## c. Connexion de la base de donnée à Wordpress
+
+Pour que Wordpress puisse se connecter à la base de donnée il faut modifier le fichier `wp-config.php` :
+
+```bash  
+zprojet@debian:/var/www/html/wordpress$ ls
+index.php        wp-admin              wp-content         wp-load.php      wp-signup.php
+license.txt      wp-blog-header.php    wp-cron.php        wp-login.php     wp-trackback.php
+readme.html      wp-comments-post.php  wp-includes        wp-mail.php      xmlrpc.php
+wp-activate.php  wp-config.php         wp-links-opml.php  wp-settings.php
+zprojet@debian:/var/www/html/wordpress$ nano wp-config.php
+```
+
+Et il faut modifier :
+- Le nom de la base de donnée : 'phpmyadmin'
+- Le nom d'utilisateur : 'pma'
+- Le mot de passe : 'pmapass'
+- Le hostname : 'localhost'
+
+```bash
+...
+// ** Database settings - You can get this info from your web host ** //
+/** The name of the database for WordPress */
+define( 'DB_NAME', 'phpmyadmin' );
+
+/** Database username */
+define( 'DB_USER', 'pma' );
+
+/** Database password */
+define( 'DB_PASSWORD', 'pmapass' );
+
+/** Database hostname */
+define( 'DB_HOST', 'localhost' );
+
+/** Database charset to use in creating database tables. */
+define( 'DB_CHARSET', 'utf8' );
+
+/** The database collate type. Don't change this if in doubt. */
+define( 'DB_COLLATE', '' );
+...
+```
+
+# 3. Initialisation du CMS
+
+Maintenant que nous avons installé Wordpress et PhpMyAdmin nous allons pouvoir initialiser le CMS en nous rendont sur l'adresse IP de notre serveur.
+
+![cms_init](/TP3%20-%20CMS/assets/2_wordpress_init.png)
+
+Une fois avoir remplis les informations, créer un utiliateur et cliqué sur "Installer Wordpress" nous arrivons sur la page de connexion. En effet le CMS nous offre une interface d'administration sécurisée par une authentification individuelle.
+
+## a. Ajout d'utilisateurs
+
+Nous souhaitons avoir plusieurs utilisateurs avec des rôles différents, pour cela une fois connexté au CMS nous allons dans "Utilisateurs" puis "Ajouter".
+
+![users_add](/TP3%20-%20CMS/assets/3_add_users.png)
+
+Les trois utilisateurs créer sont : 
+- admin : Administrateur (Administrator)
+- beta : Editeur (Editor)
+- omega : Rédacteur (Subscriber)
+
+
+
+
+# 4. Certificat SSL
